@@ -2,7 +2,7 @@
 
 This repository contains the standardized filtering logic used to process 16S, 18S, and COI metabarcoding data, specifically optimized for marine benthic ecology.
 
-## 🔗 [Live Interactive Decision Tree]([https://rafael-r-torres.github.io/benthic-metabarcoding-filter/])
+## 🔗 [Live Interactive Decision Tree](https://rafael-r-torres.github.io/benthic-metabarcoding-filter/)
 
 ## 📊 Methodology Flowchart
 ![Methodology Flowchart](Explicit_Methodology_Flowchart.png)
