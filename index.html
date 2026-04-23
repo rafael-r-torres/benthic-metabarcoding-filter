@@ -2,37 +2,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Explicit Methodology Filter</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪱</text></svg>">
-    
+    <title>Benthic Methodology Filter (Fais, 2021)</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>">
+
     <style>
-        /* PERFECT CENTER & NO SCROLL BODY */
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: #eef2f5; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; /* Vertically centers the app */
-            height: 100vh; /* Locks body exactly to window height */
-            overflow: hidden; /* Disables outer page scrolling */
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: #eef2f5; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .app-container { display: flex; max-width: 1200px; width: 95vw; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); height: 90vh; max-height: 650px; overflow: hidden; position: relative; }
         
-        /* ADAPTIVE APP CONTAINER */
-        .app-container { 
-            display: flex; 
-            max-width: 1200px; 
-            width: 95vw; 
-            background: white; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-            height: 90vh; /* Takes up 90% of screen height */
-            max-height: 650px; /* Caps maximum height so it stays compact */
-            overflow: hidden; 
-        }
-        
-        /* Main Panel (LEFT) */
-        .main-panel { width: 65%; padding: 30px 40px; display: flex; flex-direction: column; position: relative; background: #fff; overflow-y: auto;}
+        .home-panel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .home-panel h1 { color: #2c3e50; font-size: 32px; margin-bottom: 40px;}
+        .mode-buttons { display: flex; gap: 30px; }
+        .mode-card { background: #f8f9fa; border: 2px solid #e0e0e0; border-radius: 12px; padding: 40px; width: 250px; cursor: pointer; transition: 0.3s; }
+        .mode-card:hover { border-color: #3498db; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .mode-card div { font-size: 60px; margin-bottom: 20px; }
+        .mode-card h3 { color: #333; margin: 0 0 10px 0; }
+        .mode-card p { color: #7f8c8d; font-size: 14px; margin: 0; }
+
+        .main-panel { width: 65%; padding: 30px 40px; display: none; flex-direction: column; position: relative; background: #fff; overflow-y: auto;}
         .icon-container { height: 80px; font-size: 60px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;}
         .question-container { flex-grow: 1; text-align: center; display: flex; flex-direction: column; justify-content: center;}
         .question-container h2 { font-weight: 600; color: #333; font-size: 24px; margin-bottom: 15px;}
@@ -48,35 +34,19 @@
         .secondary-controls { display: flex; justify-content: center; gap: 10px; border-top: 1px solid #eee; padding-top: 15px; margin-top: 5px;}
         .btn-sec { background: #95a5a6; color: white; padding: 8px 16px; font-size: 13px; width: auto;}
 
-        /* History Panel (RIGHT) */
-        .history-panel { width: 35%; background: #fdfdfd; padding: 30px 25px; display: flex; flex-direction: column; border-left: 1px solid #ddd;}
+        .history-panel { width: 35%; background: #fdfdfd; padding: 30px 25px; display: none; flex-direction: column; border-left: 1px solid #ddd;}
         .history-panel h3 { margin-top: 0; color: #555; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; text-align: center; margin-bottom: 15px; flex-shrink: 0;}
-        
-        /* SCROLLABLE LIST */
         #historyList { flex-grow: 1; overflow-y: auto; padding-left: 15px; scroll-behavior: smooth; padding-right: 10px;}
-        
-        /* Custom Scrollbar for sleek UI */
         #historyList::-webkit-scrollbar { width: 6px; }
         #historyList::-webkit-scrollbar-track { background: transparent; }
         #historyList::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         #historyList::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        /* The Tree Trunk and Nodes */
+
         .tree-trunk { border-left: 3px solid #bdc3c7; padding-left: 25px; position: relative; padding-bottom: 20px; margin-left: 15px; margin-top: 5px;}
-        .tree-node {
-            border-radius: 6px; padding: 10px 12px; margin-bottom: 20px;
-            position: relative; font-size: 12px; font-weight: 500;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); line-height: 1.4;
-        }
-        .tree-node::before {
-            content: ""; position: absolute; left: -28px; top: 16px; width: 25px; height: 3px; background: #bdc3c7;
-        }
-        .tree-node::after {
-            content: ""; position: absolute; left: -34px; top: 11px; width: 13px; height: 13px;
-            border-radius: 50%; border: 2px solid #fff;
-        }
-        
-        /* Node Colors matching Graphviz */
+        .tree-node { border-radius: 6px; padding: 10px 12px; margin-bottom: 20px; position: relative; font-size: 12px; font-weight: 500; box-shadow: 0 2px 5px rgba(0,0,0,0.05); line-height: 1.4;}
+        .tree-node::before { content: ""; position: absolute; left: -28px; top: 16px; width: 25px; height: 3px; background: #bdc3c7; }
+        .tree-node::after { content: ""; position: absolute; left: -34px; top: 11px; width: 13px; height: 13px; border-radius: 50%; border: 2px solid #fff; }
+
         .node-blue { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
         .node-blue::after { background: #3498db; }
         .node-red { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
@@ -91,7 +61,23 @@
 </head>
 <body>
     <div class="app-container">
-        
+
+        <div class="home-panel" id="homeScreen">
+            <h1>Select Target Filter</h1>
+            <div class="mode-buttons">
+                <div class="mode-card" onclick="startApp('macro')">
+                    <div>🦀</div>
+                    <h3>Macrobenthos</h3>
+                    <p>Standard macroscopic filtering logic</p>
+                </div>
+                <div class="mode-card" onclick="startApp('meio')">
+                    <div>🔬</div>
+                    <h3>Meiobenthos</h3>
+                    <p>Based on explicit lists from Fais (2021) Table 1.1</p>
+                </div>
+            </div>
+        </div>
+
         <div class="main-panel" id="mainPanel">
             <div class="icon-container" id="qIcon">📉</div>
             <div class="question-container">
@@ -105,69 +91,106 @@
             <div class="secondary-controls" id="secControls">
                 <button class="btn-sec" onclick="goBack()">⟵ Back</button>
                 <button class="btn-sec" onclick="startOver()">↻ Restart</button>
+                <button class="btn-sec" onclick="goHome()">🏠 Menu</button>
             </div>
         </div>
 
-        <div class="history-panel">
-            <h3>Live Flowchart Path</h3>
+        <div class="history-panel" id="historyPanel">
+            <h3 id="historyTitle">Live Flowchart Path</h3>
             <div id="historyList"></div>
         </div>
 
     </div>
     <script>
-        const logic = [
+        // --- 1. MACROBENTHIC LOGIC ---
+        const macroLogic = [
             { icon: "📉", title: "Low Statistical Confidence?", details: "<ul><li>e-value > 0.01</li></ul>", yes: "🔴 DISCARD: Low Statistical Confidence" },
             { icon: "🗄️", title: "Unmatched / Blank Taxonomic Data?", details: "<ul><li>Match Status: Not found in WoRMS</li><li>Match Status: Filtered (Environmental)</li><li>Kingdom: [Blank]</li></ul>", yes: "🔴 DISCARD: Unmatched/Non-Marine" },
-            { icon: "🐾", title: "Kingdom NOT Animalia?", details: "<ul><li>Kingdom: Bacteria</li><li>Kingdom: Archaea</li><li>Kingdom: Protozoa</li><li>Kingdom: Chromista</li><li>Kingdom: Fungi</li><li>Kingdom: Plantae</li></ul>", yes: "🔴 DISCARD: Not Animalia" },
-            { icon: "🕷️", title: "Terrestrial Arthropod?", details: "<ul><li>Class: Hexapoda (Insects)</li><li>Class: Insecta</li><li>Class: Arachnida (Spiders/Mites)</li><ul><li><em>Exception: Keep Family Halacaridae (Marine Mites)</em></li></ul></ul>", yes: "🔴 DISCARD: Terrestrial Contaminant" },
-            { icon: "🦐", title: "Pelagic / Planktonic Taxon?", details: "<ul><li>Genera: Tomopteris, Alciopa, Limacina, Creseis, Themisto, Lucifer, Acartia, Oithona, Calanus, Centropages, Paracalanus, Temora, Penilia, Podon, Parasagitta, Euphausia</li><li>Class: Thaliacea</li><li>Class: Appendicularia</li><li>Class: Copepoda (without benthic life stage tag)</li><li>Tagged: Plankton or Nekton (without benthic life stage tag)</li></ul>", yes: "🔴 DISCARD: Pelagic Exception" },
+            { icon: "🐾", title: "Kingdom NOT Animalia?", details: "<ul><li>Kingdom: Bacteria, Archaea, Protozoa, Chromista, Fungi, Plantae</li></ul>", yes: "🔴 DISCARD: Not Animalia" },
+            { icon: "🕷️", title: "Terrestrial Arthropod?", details: "<ul><li>Class: Hexapoda (Insects)</li><li>Class: Arachnida (Spiders/Mites)</li><ul><li><em>Exception: Keep Family Halacaridae (Marine Mites)</em></li></ul></ul>", yes: "🔴 DISCARD: Terrestrial Contaminant" },
+            { icon: "🦐", title: "Pelagic / Planktonic Taxon?", details: "<ul><li>Genera: Tomopteris, Alciopa, Limacina, Creseis, Themisto, Lucifer, Acartia, Oithona, Calanus, Centropages, Paracalanus, Temora, Penilia, Podon, Parasagitta, Euphausia</li><li>Class: Thaliacea, Appendicularia</li><li>Class: Copepoda (except Harpacticoida or benthic tag)</li><li>Tagged: Plankton or Nekton (without benthic tag)</li></ul>", yes: "🔴 DISCARD: Pelagic Exception" },
             { icon: "🐟", title: "Vertebrate Fish?", details: "<ul><li>Phylum: Chordata</li><ul><li><em>Exception: Keep Class Ascidiacea (Sea Squirts)</em></li><li><em>Exception: Keep Class Leptocardii (Lancelets)</em></li></ul></ul>", yes: "🔴 DISCARD: Pelagic Fish" },
             { icon: "🪱", title: "Parasitic Ecology?", details: "<ul><li>Feeding Method: parasitic</li><li>Ecological Interaction: parasitic</li><li>Phylum: Dicyemida</li><li>Family: Dicyemidae</li></ul>", yes: "🟢 KEEP: Parasite Flag" },
-            { icon: "🔬", title: "Phylum Tardigrada?", details: "<ul><li>Phylum: Tardigrada (Water Bears)</li></ul>", yes: "🟢 KEEP: Tardigrada (still keep?)" },
-            { icon: "🦀", title: "Explicit Benthos Tag?", details: "<ul><li>Functional Group: benthos</li><li>Functional Group: macrobenthos</li></ul>", yes: "🟢 KEEP: Confirmed Benthos" },
-            { icon: "🦑", title: "Typically Benthic Phylum?", details: "<ul><li>Ecological Data: [Blank] or [Not Applicable]</li><li>Phylum: Annelida</li><li>Phylum: Mollusca</li><li>Phylum: Arthropoda</li><li>Phylum: Echinodermata</li><li>Phylum: Platyhelminthes</li><li>Phylum: Nematoda</li><li>Phylum: Dicyemida</li><li>Phylum: Chordata</li></ul>", yes: "🟢 KEEP: Taxonomic Proxy", no: "🟡 CHECK: Manual Review" }
+            { icon: "🐻", title: "Phylum Tardigrada?", details: "<ul><li>Phylum: Tardigrada (Water Bears)</li></ul>", yes: "🔴 DISCARD: Meiofauna Exception" },
+            { icon: "🦀", title: "Explicit Benthos Tag?", details: "<ul><li>Functional Group: benthos / macrobenthos</li></ul>", yes: "🟢 KEEP: Confirmed Benthos" },
+            { icon: "🦑", title: "Typically Benthic Phylum?", details: "<ul><li>Ecological Data: [Blank] or [Not Applicable]</li><li>Annelida, Mollusca, Arthropoda, Echinodermata, Platyhelminthes, Nematoda, Dicyemida, Chordata</li></ul>", yes: "🟢 KEEP: Taxonomic Proxy", no: "🟡 CHECK: Manual Review" }
         ];
 
-        let currentStep = 0, pathMemory = [], isEnd = false;
+        // --- 2. MEIOBENTHIC LOGIC (Fais, 2021) ---
+        const meioLogic = [
+            { icon: "📉", title: "Low Statistical Confidence?", details: "<ul><li>e-value > 0.01</li></ul>", yes: "🔴 DISCARD: Low Statistical Confidence" },
+            { icon: "🗄️", title: "Unmatched / Blank Taxonomic Data?", details: "<ul><li>Match Status: Not found in WoRMS</li><li>Match Status: Filtered (Environmental)</li></ul>", yes: "🔴 DISCARD: Unmatched Data" },
+            { icon: "🦐", title: "Pelagic / Planktonic Taxon?", details: "<ul><li>Genera: Tomopteris, Alciopa, Limacina, Creseis, Themisto, Lucifer, Acartia, Oithona, Calanus, Centropages, Paracalanus, Temora, Penilia, Podon, Parasagitta, Euphausia</li><li>Class: Thaliacea, Appendicularia</li><li>Class: Copepoda (except Harpacticoida or benthic tag)</li><li>Tagged: Plankton or Nekton (without benthic tag)</li></ul>", yes: "🔴 DISCARD: Pelagic Exception" },
+            { icon: "⚠️", title: "Macro-Invertebrate Exception?", details: "<ul><li>Is it an Arthropod or Echinoderm but NOT explicitly kept below?</li><li><b>KEPT ARTHROPODA:</b> Cephalocarida, Branchiopoda, Ostracoda, Mystacocarida, Harpacticoida, Cyclopoida, Siphonostomatoida, Syncarida, Peracarida, Trombidiformes, Pycnogonida</li><li><b>KEPT ECHINODERMATA:</b> Holothuroidea</li><li><b>REMOVED:</b> All other Arthropods and Echinoderms</li></ul>", yes: "🔴 DISCARD: Macro-Invertebrate Exception" },
+            { icon: "🌲", title: "Terrestrial Thalassobiont?", details: "<ul><li>Is it one of the terrestrial beach groups from Fais (2021)?</li><li>(Araneae, Pseudoscorpionida, Chilopoda, Collembola, Coleoptera, Diptera)</li><li><em>Note: These are kept but flagged, as they are likely contaminants at 30m depth.</em></li></ul>", yes: "🟡 KEEP: Flagged Terrestrial (Possible 30m Contaminant)" },
+            { icon: "🦠", title: "Explicitly in Fais (2021) Phyla List?", details: "<ul><li><b>REMOVED:</b> Any phylum not explicitly listed here.</li><li><b>KEPT:</b> Foraminifera, Heliozoa, Ciliophora, Amoebozoa, Porifera, Cnidaria, Platyhelminthes, Gnathostomulida, Rotifera, Micrognathozoa, Nemertea, Nematoda, Kinorhyncha, Priapulida, Loricifera, Gastrotricha, Tardigrada, Annelida, Sipuncula, Mollusca, Brachiopoda, Bryozoa, Entoprocta, Chaetognata, Tunicata, Acarina (Marine mites)</li></ul>", yes: "🟢 KEEP: Table 1.1 Meiofauna", no: "🔴 DISCARD: Not in Table 1.1" }
+        ];
+
+        let activeLogic = [];
+        let currentStep = 0;
+        let pathMemory = [];
+        let isEnd = false;
+
+        function startApp(mode) {
+            document.getElementById("homeScreen").style.display = "none";
+            document.getElementById("mainPanel").style.display = "flex";
+            document.getElementById("historyPanel").style.display = "flex";
+            
+            activeLogic = mode === 'macro' ? macroLogic : meioLogic;
+            document.getElementById("historyTitle").innerText = mode === 'macro' ? "Macrobenthos Path" : "Meiobenthos Path";
+            
+            startOver();
+        }
+
+        function goHome() {
+            document.getElementById("homeScreen").style.display = "flex";
+            document.getElementById("mainPanel").style.display = "none";
+            document.getElementById("historyPanel").style.display = "none";
+        }
 
         function render() {
-            const step = logic[currentStep];
+            const step = activeLogic[currentStep];
             document.getElementById("btnGroup").style.display = isEnd ? "none" : "flex";
             document.getElementById("mainPanel").style.backgroundColor = isEnd ? "" : "white";
+            
+            // Background color matches outcome for visual feedback
+            if (isEnd) {
+                if (step.resultText.includes("🔴")) document.getElementById("mainPanel").style.backgroundColor = "#ffebee"; // Red
+                else if (step.resultText.includes("🟢")) document.getElementById("mainPanel").style.backgroundColor = "#e8f5e9"; // Green
+                else if (step.resultText.includes("🟡")) document.getElementById("mainPanel").style.backgroundColor = "#fff8e1"; // Yellow
+            }
+
             document.getElementById("qIcon").innerText = step.icon;
             document.getElementById("qTitle").innerHTML = isEnd ? "<strong>"+step.resultText+"</strong>" : step.title;
             document.getElementById("qDetails").innerHTML = isEnd ? "" : step.details;
             document.getElementById("qDetails").style.display = isEnd ? "none" : "block";
 
-            // Build the right-side flowchart using the FULL title
             let h = '<div class="tree-trunk">';
             pathMemory.forEach(m => {
                 let colorClass = m.c === 'yes' ? 'node-red' : 'node-blue';
                 h += `<div class="tree-node ${colorClass}">
-                        <strong>${logic[m.idx].title}</strong><br>
+                        <strong>${activeLogic[m.idx].title}</strong><br>
                         <span style="font-size:11px; opacity:0.8;">Decision: ${m.c.toUpperCase()}</span>
                       </div>`;
             });
-            
-            // Add the current or final node to the flowchart
+
             if (!isEnd) {
                 h += `<div class="tree-node node-current">
                         <em style="font-size:11px; color:#888;">Currently Checking:</em><br>
-                        <strong>${logic[currentStep].title}</strong>
+                        <strong>${activeLogic[currentStep].title}</strong>
                       </div>`;
             } else {
-                let result = logic[currentStep].resultText;
-                let finalClass = result.includes('KEEP') ? 'node-green' : (result.includes('DISCARD') ? 'node-red' : 'node-yellow');
+                let result = activeLogic[currentStep].resultText;
+                let finalClass = result.includes('KEEP') ? (result.includes('🟡') ? 'node-yellow' : 'node-green') : 'node-red';
                 h += `<div class="tree-node ${finalClass}">
                         <strong>${result}</strong>
                       </div>`;
             }
             h += '</div>';
-            
+
             document.getElementById("historyList").innerHTML = h;
             document.getElementById("secControls").style.display = pathMemory.length ? "flex" : "none";
-            
-            // Auto-scroll the flowchart to the bottom using a slight delay to ensure rendering
+
             setTimeout(() => {
                 const hList = document.getElementById("historyList");
                 hList.scrollTop = hList.scrollHeight;
@@ -175,16 +198,14 @@
         }
 
         function answer(c) {
-            const step = logic[currentStep];
+            const step = activeLogic[currentStep];
             pathMemory.push({idx: currentStep, c: c});
             if (c === 'yes') {
                 isEnd = true;
                 step.resultText = step.yes;
-                document.getElementById("mainPanel").style.backgroundColor = "#ffebee";
-            } else if (currentStep === logic.length - 1) {
+            } else if (currentStep === activeLogic.length - 1) {
                 isEnd = true;
-                step.resultText = "🟡 CHECK: Manual Review";
-                document.getElementById("mainPanel").style.backgroundColor = "#fff8e1";
+                step.resultText = step.no || "🟡 CHECK: Manual Review";
             } else {
                 currentStep++;
             }
@@ -201,9 +222,6 @@
         function startOver() {
             pathMemory = []; currentStep = 0; isEnd = false; render();
         }
-        
-        // Initialize
-        render();
     </script>
 </body>
 </html>
